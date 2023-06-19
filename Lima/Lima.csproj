@@ -2,6 +2,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Bravo\Bravo.csproj" />
+    <ProjectReference Include="..\Foxtrot\Foxtrot.csproj" />
+    <ProjectReference Include="..\Eco\Eco.csproj" />
+    <ProjectReference Include="..\Oscar\Oscar.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
