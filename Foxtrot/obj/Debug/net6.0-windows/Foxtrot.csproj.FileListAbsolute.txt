@@ -1,0 +1,15 @@
+C:\Users\disrct\Desktop\kinect\Foxtrot\obj\Debug\net6.0-windows\Foxtrot.csproj.AssemblyReference.cache
+C:\Users\disrct\Desktop\kinect\Foxtrot\obj\Debug\net6.0-windows\Foxtrot.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\disrct\Desktop\kinect\Foxtrot\obj\Debug\net6.0-windows\Foxtrot.AssemblyInfoInputs.cache
+C:\Users\disrct\Desktop\kinect\Foxtrot\obj\Debug\net6.0-windows\Foxtrot.AssemblyInfo.cs
+C:\Users\disrct\Desktop\kinect\Foxtrot\obj\Debug\net6.0-windows\Foxtrot.csproj.CoreCompileInputs.cache
+C:\Users\disrct\Desktop\kinect\Foxtrot\bin\Debug\net6.0-windows\Foxtrot.exe
+C:\Users\disrct\Desktop\kinect\Foxtrot\bin\Debug\net6.0-windows\Foxtrot.deps.json
+C:\Users\disrct\Desktop\kinect\Foxtrot\bin\Debug\net6.0-windows\Foxtrot.runtimeconfig.json
+C:\Users\disrct\Desktop\kinect\Foxtrot\bin\Debug\net6.0-windows\Foxtrot.dll
+C:\Users\disrct\Desktop\kinect\Foxtrot\bin\Debug\net6.0-windows\Foxtrot.pdb
+C:\Users\disrct\Desktop\kinect\Foxtrot\obj\Debug\net6.0-windows\Foxtrot.dll
+C:\Users\disrct\Desktop\kinect\Foxtrot\obj\Debug\net6.0-windows\refint\Foxtrot.dll
+C:\Users\disrct\Desktop\kinect\Foxtrot\obj\Debug\net6.0-windows\Foxtrot.pdb
+C:\Users\disrct\Desktop\kinect\Foxtrot\obj\Debug\net6.0-windows\Foxtrot.genruntimeconfig.cache
+C:\Users\disrct\Desktop\kinect\Foxtrot\obj\Debug\net6.0-windows\ref\Foxtrot.dll
