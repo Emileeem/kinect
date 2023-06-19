@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\Lima\Lima.csproj" />
+    <ProjectReference Include="..\Bravo\Bravo.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
