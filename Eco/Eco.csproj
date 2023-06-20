@@ -1,16 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <ItemGroup>
-    <ProjectReference Include="..\Bravo\Bravo.csproj" />
-    <ProjectReference Include="..\Lima\Lima.csproj" />
-    <ProjectReference Include="..\Foxtrot\Foxtrot.csproj" />
-    <ProjectReference Include="..\Oscar\Oscar.csproj" />
-  </ItemGroup>
+
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
   </PropertyGroup>
 
 </Project>
