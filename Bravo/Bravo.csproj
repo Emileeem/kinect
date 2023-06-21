@@ -1,5 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <ItemGroup>
+    <ProjectReference Include="..\Foxtrot\Foxtrot.csproj" />
+    <ProjectReference Include="..\Lima\Lima.csproj" />
+    <ProjectReference Include="..\Eco\Eco.csproj" />
+    <ProjectReference Include="..\Oscar\Oscar.csproj" />
+  </ItemGroup>
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
