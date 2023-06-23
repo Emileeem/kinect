@@ -1,6 +1,6 @@
 namespace Oscar;
 
-static class Otsu
+static public class Otsu
 {
     static public int genOtsu(int[] hist, int N)
     {
