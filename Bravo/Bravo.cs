@@ -3,15 +3,12 @@ using System.Drawing.Imaging;
 
 namespace Bravo;
 
-class Blur
+static class Blur
 {
-    public unsafe Bitmap UseBlur(Bitmap input, int n)
+    static public unsafe Bitmap UseBlur(Bitmap input, int n)
     {
         long[] r, g, b;
         (r, g, b) = integral(input);
-
-        int side = 2 * n + 1;
-        int area = side * side;
 
         var result = input.Clone() as Bitmap;
         var data = result.LockBits(
@@ -19,36 +16,53 @@ class Blur
             ImageLockMode.ReadWrite,
             PixelFormat.Format24bppRgb
         );
-        byte* p = (byte*)data.Scan0.ToPointer();
 
-        for (int j = n + 1; j < input.Height - n - 1; j++)
+        fixed (long* rPointer = r, gPointer = g, bPointer = b)
         {
-            for (int i = n + 1; i < input.Width - n - 1; i++)
-            {
-                int index = j * input.Width + i;
-                int imgIndex = j * data.Stride + 3 * i;
-
-                long lfcf = index + n + n * input.Width;
-                long li1cf = index + n - (n + 1) * input.Width;
-                long lfci1 = index - (n + 1) + n * input.Width;
-                long li1ci1 = index - (n + 1) - (n + 1) * input.Width;
-
-                int bd = (int)((b[lfcf] - b[li1cf] - b[lfci1] + b[li1ci1]) / area);
-                int gd = (int)((g[lfcf] - g[li1cf] - g[lfci1] + g[li1ci1]) / area);
-                int rd = (int)((r[lfcf] - r[li1cf] - r[lfci1] + r[li1ci1]) / area);
-
-                p[imgIndex] = (byte)bd;
-                p[imgIndex + 1] = (byte)gd;
-                p[imgIndex + 2] = (byte)rd;
-            }
+            byte* p = (byte*)data.Scan0.ToPointer();
+            long* rp = rPointer, gp = gPointer, bp = bPointer;
+            SetImage(p, rp, gp, bp, input.Width, input.Height, data.Stride, n);
         }
-
         result.UnlockBits(data);
 
         return result;
     }
 
-    private unsafe (long[] r, long[] g, long[] b) integral(Bitmap input)
+    static private unsafe void SetImage(byte* im, long* r, long* g, long* b, int width, int height, int stride, int n)
+    {
+        int side = 2 * n + 1;
+        float area = side * side;
+
+        int cantoA = -(n + 1) - (n + 1) * width; // nao ta aqui
+        int cantoB = n - (n + 1) * width; // nao ta aqui
+        int cantoC = -(n + 1) + n * width; // nao ta aqui
+        int cantoD = n + n * width; // nao ta aqui
+
+        int desloc = (n + 1) * (width + 1); // nao ta aqui
+        im += (n + 1) * (stride + 3); // nao ta aqui
+        b += desloc;
+        g += desloc;
+        r += desloc;
+
+        int subDesloc = 2 * n + 1;
+
+        for (int j = n + 1; j < height - n; j++)
+        {
+            for (int i = n + 1; i < width - n; i++, im += 3, b++, g++, r++)
+            {
+                *(im + 0) = (byte)((*(b + cantoD) + *(b + cantoA) - *(b + cantoB) - *(b + cantoC)) / area);
+                *(im + 1) = (byte)((*(g + cantoD) + *(g + cantoA) - *(g + cantoB) - *(g + cantoC)) / area);
+                *(im + 2) = (byte)((*(r + cantoD) + *(r + cantoA) - *(r + cantoB) - *(r + cantoC)) / area);
+            }
+
+            r += subDesloc;
+            g += subDesloc;
+            b += subDesloc;
+            im += 6 * n + 3 + stride - 3 * width; // nao ta aqui
+        }
+    }
+
+    static private unsafe (long[] r, long[] g, long[] b) integral(Bitmap input)
     {
         var data = input.LockBits(
             new Rectangle(0, 0, input.Width, input.Height),
@@ -56,9 +70,9 @@ class Blur
             PixelFormat.Format24bppRgb
         );
 
-        long[] r = new long[input.Width * input.Height];
         long[] g = new long[input.Width * input.Height];
         long[] b = new long[input.Width * input.Height];
+        long[] r = new long[input.Width * input.Height];
 
         fixed (long* rPointer = r, gPointer = g, bPointer = b)
         {
@@ -76,14 +90,14 @@ class Blur
         return (r, g, b);
     }
 
-    unsafe void setInitial(byte* im, long* r, long* g, long* b)
+    static unsafe void setInitial(byte* im, long* r, long* g, long* b)
     {
         *b = *(im + 0);
         *g = *(im + 1);
         *r = *(im + 2);
     }
 
-    unsafe void setLine(byte* im, long* r, long* g, long* b, int width)
+    static unsafe void setLine(byte* im, long* r, long* g, long* b, int width)
     {
         b++;
         g++;
@@ -96,7 +110,7 @@ class Blur
         }
     }
 
-    unsafe void setColumn(byte* im, long* r, long* g, long* b, int height, int width, int stride)
+    static unsafe void setColumn(byte* im, long* r, long* g, long* b, int height, int width, int stride)
     {
         b += width;
         g += width;
@@ -110,7 +124,7 @@ class Blur
         }
     }
 
-    unsafe void fill(byte* im, long* r, long* g, long* b, int height, int width, int stride)
+    static unsafe void fill(byte* im, long* r, long* g, long* b, int height, int width, int stride)
     {
         int intWidth = width + 1;
 
@@ -133,6 +147,7 @@ class Blur
                 r++;
                 im += 3;
             }
+            im += stride - 3 * width;
         }
     }
 }
