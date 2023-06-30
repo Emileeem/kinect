@@ -3,20 +3,19 @@ namespace Lima;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
-using Oscar;
+using static Oscar.Otsu;
 
 class Lima
 {
-    static Bitmap flame(Bitmap img1, Bitmap img2)
+    static public Bitmap flame(float mediaBg, int[] histBg, Bitmap img1, Bitmap img2)
     {
-        int[] hist1 = histogram(img1);
         int[] hist2 = histogram(img2);
 
-        correcaoLuminosidade(img1, hist1, img2, hist2);
+        correcaoLuminosidade(mediaBg, img2, hist2);
 
         int[] hist3 = histSub(img1, img2);
         int n = img2.Height * img2.Width;
-        int threshold = Otsu.genOtsu(hist3, n);
+        int threshold = genOtsu(hist3, n);
 
         binarize(threshold, img1, img2);
 
@@ -24,7 +23,7 @@ class Lima
     }
 
 
-    static unsafe int[] histogram(Bitmap bmp)
+    static public unsafe int[] histogram(Bitmap bmp)
     {
         int[] hist = new int[256];
 
@@ -76,7 +75,7 @@ class Lima
         return hist;
     }
 
-    static unsafe int[] histSub(Bitmap bmp1, Bitmap bmp2)
+    static public unsafe int[] histSub(Bitmap bmp1, Bitmap bmp2)
     {
         int[] sub = new int[256 * 256];
 
@@ -125,7 +124,7 @@ class Lima
         return sub;
     }
 
-    static unsafe void binarize(int threshold, Bitmap bmp1, Bitmap bmp2)
+    static public unsafe void binarize(int threshold, Bitmap bmp1, Bitmap bmp2)
     {
         var data1 = bmp1.LockBits(
             new Rectangle(0, 0, bmp1.Width, bmp1.Height),
@@ -181,19 +180,11 @@ class Lima
         bmp2.UnlockBits(data2);
     }
 
-    static unsafe void correcaoLuminosidade(Bitmap bmp1, int[] hist1, Bitmap bmp2, int[] hist2)
+
+    static public unsafe void correcaoLuminosidade(float mediaBg, Bitmap bmp2, int[] hist2)
     {
         float sum = 0;
         float count = 0;
-        for (int k = 0; k < hist1.Length; k++)
-        {
-            count += hist1[k];
-            sum += k * hist1[k];
-        }
-        float media1 = sum / count;
-
-        sum = 0;
-        count = 0;
         for (int k = 0; k < hist2.Length; k++)
         {
             count += hist2[k];
@@ -201,11 +192,6 @@ class Lima
         }
         float media2 = sum / count;
 
-        var data = bmp1.LockBits(
-            new Rectangle(0, 0, bmp1.Width, bmp1.Height),
-            ImageLockMode.ReadOnly,
-            PixelFormat.Format24bppRgb
-        );
         var data2 = bmp2.LockBits(
             new Rectangle(0, 0, bmp2.Width, bmp2.Height),
             ImageLockMode.ReadWrite,
@@ -213,7 +199,7 @@ class Lima
         );
 
         byte* im = (byte*)data2.Scan0.ToPointer();
-        float alfa = media1 / media2;
+        float alfa = mediaBg / media2;
 
         for (int j = 0; j < bmp2.Height; j++)
         {
@@ -234,8 +220,20 @@ class Lima
             }
         }
 
-        bmp1.UnlockBits(data);
         bmp2.UnlockBits(data2);
+    }
+
+
+    float mediaBg(int[] histBg)
+    {
+        float sum = 0;
+        float count = 0;
+        for (int k = 0; k < histBg.Length; k++)
+        {
+            count += histBg[k];
+            sum += k * histBg[k];
+        }
+        return sum / count;
     }
 }
 
