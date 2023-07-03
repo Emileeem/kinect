@@ -16,8 +16,10 @@ namespace Webcam
     {
         WebCamManager cam;
         Bitmap bg = null;
-        bool seeBg = true;
-        int blur = 5;
+
+        bool useBlur = true;
+        int blur = 0;
+        int bgBlur = 0;
 
         public Form1()
         {
@@ -33,15 +35,23 @@ namespace Webcam
                         closeApp();
                         break;
                     case Keys.Space:
-                         cam.RequestScreenshot(im => this.bg = UseBlur(im, blur));
+                        if (this.bg is null)
+                        {
+                            cam.RequestScreenshot(im => this.bg = UseBlur(im, blur));
+                            this.bgBlur = blur;
+                        }
+                        else
+                        {
+                            this.bg = null;
+                            this.bgBlur = 0;
+                        }
                         break;
                     case Keys.Enter:
-                        this.bg = null;
                         break;
                     case Keys.Tab:
-                        if (this.seeBg)
-                            this.seeBg = false;
-                        else this.seeBg = true;
+                        if (this.useBlur)
+                            this.useBlur = false;
+                        else this.useBlur = true;
                         break;
                     case Keys.Add:
                         if (this.blur < 50)
@@ -62,10 +72,11 @@ namespace Webcam
             cam.Load();
             cam.AddHandler(25, im =>
             {
-                label1.Text = "Blur: " + blur.ToString();
-                label2.Text = "Blur: " + blur.ToString();
-                label3.Text = "Blur: " + blur.ToString();
-                if (!this.seeBg)
+                label1.Text =
+                    "Blur/Quant: \n" + (this.useBlur ? "on/" : "off/") + this.blur.ToString() + "\n\n" +
+                    "BlurBg: " + this.bgBlur.ToString();
+
+                if (!this.useBlur)
                     im = UseBlur(im, blur);
                 im = flame(bg, im);
                 pbWebcam.Image = im;

@@ -30,6 +30,7 @@
         {
             this.pbWebcam = new System.Windows.Forms.PictureBox();
             this.label1 = new System.Windows.Forms.Label();
+            //this.label2 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pbWebcam)).BeginInit();
             this.SuspendLayout();
             // 
@@ -51,27 +52,27 @@
             this.label1.Size = new System.Drawing.Size(38, 15);
             this.label1.TabIndex = 2;
             this.label1.Text = "Blur: ";
-            this.label1.Font = new Font("Arial", 40,FontStyle.Bold);
+            this.label1.Font = new Font("Arial", 25,FontStyle.Bold);
             // 
             // label2
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(10, 30);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(38, 15);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Blur: ";
-            this.label2.Font = new Font("Arial", 40,FontStyle.Bold);
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(10, 50);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(38, 15);
-            this.label3.TabIndex = 4;
-            this.label3.Text = "Blur: ";
-            this.label3.Font = new Font("Arial", 40,FontStyle.Bold);
+            //this.label2.AutoSize = true;
+            //this.label2.Location = new System.Drawing.Point(10, 70);
+            //this.label2.Name = "label2";
+            //this.label2.Size = new System.Drawing.Size(38, 15);
+            //this.label2.TabIndex = 2;
+            //this.label2.Text = "Bg: ";
+            //this.label2.Font = new Font("Arial", 40, FontStyle.Bold);
+            //// 
+            //// label3
+            //// 
+            //this.label3.AutoSize = true;
+            //this.label3.Location = new System.Drawing.Point(10, 50);
+            //this.label3.Name = "label3";
+            //this.label3.Size = new System.Drawing.Size(38, 15);
+            //this.label3.TabIndex = 4;
+            //this.label3.Text = "Blur: ";
+            //this.label3.Font = new Font("Arial", 40,FontStyle.Bold);
             // 
             // Form1
             // 
@@ -79,6 +80,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(786, 483);
             this.Controls.Add(this.label1);
+            //this.Controls.Add(this.label2);
             this.Controls.Add(this.pbWebcam);
             this.Name = "Form1";
             this.Text = "Form1";
@@ -92,7 +94,7 @@
 
         private PictureBox pbWebcam;
         private Label label1;
-        private Label label2;
-        private Label label3;
+        //private Label label2;
+        //private Label label3;
     }
 }
