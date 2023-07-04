@@ -8,7 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using AForge.Video.DirectShow;
 using static Lima.Lima;
-using static Bravo.Blur;
+using Bravo;
 
 namespace Webcam
 {
@@ -40,7 +40,7 @@ namespace Webcam
                         {
                             cam.RequestScreenshot(im =>
                             {
-                                this.bg = UseBlur(im, blur);
+                                this.bg = Blur.Apply(im, blur);
                                 this.bgMedia = mediaBg(histogram(this.bg));
                                 this.bgBlur = blur;
                             });
@@ -84,7 +84,7 @@ namespace Webcam
                 lock (cam)
                 {
                     if (!this.useBlur)
-                        im = UseBlur(im, blur);
+                        im = Blur.Apply(im, blur);
                     im = flame(bgMedia, bg, im);
                     pbWebcam.Image = im;
                 }
