@@ -1,23 +1,21 @@
-namespace Lima;
+﻿namespace Lima;
 
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using Oscar;
 
-static class Lima
+static class LimaOld
 {
-    static public Bitmap flame(float mediaBg, Bitmap bg, Bitmap frame)
+    static public Bitmap flame(Bitmap bg, Bitmap frame)
     {
-        if(bg is null)
+        if (bg is null)
             return frame;
 
-        // int[] hist1 = histogram(img1); histBg
+        int[] hist1 = histogram(bg);
         int[] hist2 = histogram(frame);
 
-        correcaoLuminosidade(mediaBg, frame, hist2);
-
-        // img2.Save("braia.png");
+        correcaoLuminosidade(bg, hist1, frame, hist2);
 
         int[] hist3 = histSub(bg, frame);
         int n = frame.Height * frame.Width;
@@ -25,7 +23,6 @@ static class Lima
 
         binarize(threshold, bg, frame);
 
-        // MessageBox.Show((DateTime.Now - dt).TotalMilliseconds.ToString() + "ms");
         return frame;
     }
 
@@ -43,46 +40,28 @@ static class Lima
         byte* im = (byte*)data.Scan0.ToPointer();
 
         int limitX = bmp.Width * 5 / 100 - 1;
-        int limitX2 = bmp.Width * 95 / 100 - 1;
-        int height = bmp.Height;
-        int width = bmp.Width;
-
-        Parallel.Invoke(
-            () =>
+        for (int i = 0, k = bmp.Width - 1; i < limitX; i++, k--)
+        {
+            for (int j = 0; j < bmp.Height; j++)
             {
-                Parallel.For(0, limitX, i =>
-                {
-                    for (int j = 0; j < height; j++)
-                    {
-                        int index1 = 3 * i + j * data.Stride;
-                        byte b1 = im[index1];
-                        byte g1 = im[index1 + 1];
-                        byte r1 = im[index1 + 2];
-                        int intensity1 = (299 * r1 + 587 * g1 + 114 * b1) / 1000;
-                        Interlocked.Increment(ref hist[intensity1]);
-                    }
-                });
-            },
+                int index1 = 3 * i + j * data.Stride;
+                byte b1 = im[index1];
+                byte g1 = im[index1 + 1];
+                byte r1 = im[index1 + 2];
+                int intensidade1 = (299 * r1 + 587 * g1 + 114 * b1) / 1000;
+                hist[intensidade1]++;
 
-            () =>
-            {
-                Parallel.For(limitX2, width, i =>
-                {
-                    for (int j = 0; j < height; j++)
-                    {
-                        int index2 = 3 * i + j * data.Stride;
-                        byte b2 = im[index2];
-                        byte g2 = im[index2 + 1];
-                        byte r2 = im[index2 + 2];
-                        int intensity2 = (299 * r2 + 587 * g2 + 114 * b2) / 1000;
-                        Interlocked.Increment(ref hist[intensity2]);
-                    }
-                });
+                int index2 = 3 * k + j * data.Stride;
+                byte b2 = im[index2];
+                byte g2 = im[index2 + 1];
+                byte r2 = im[index2 + 2];
+                int intensidade2 = (299 * r2 + 587 * g2 + 114 * b2) / 1000;
+                hist[intensidade2]++;
             }
-        );
+        }
 
         int limitJ = bmp.Height * 5 / 100;
-        Parallel.For(0, bmp.Width, i =>
+        for (int i = 0; i < bmp.Width; i++)
         {
             for (int j = 0; j < limitJ; j++)
             {
@@ -90,10 +69,10 @@ static class Lima
                 byte b1 = im[index1];
                 byte g1 = im[index1 + 1];
                 byte r1 = im[index1 + 2];
-                int intensity1 = (int)(r1 * 0.299 + g1 * 0.587 + b1 * 0.114);
-                Interlocked.Increment(ref hist[intensity1]);
+                int intensidade1 = (int)(r1 * 0.299 + g1 * 0.587 + b1 * 0.114);
+                hist[intensidade1]++;
             }
-        });
+        }
 
         bmp.UnlockBits(data);
 
@@ -118,7 +97,6 @@ static class Lima
 
         byte* img1 = (byte*)data.Scan0.ToPointer();
         byte* img2 = (byte*)data2.Scan0.ToPointer();
-
 
         for (int j = 0; j < data.Height; j++)
         {
@@ -166,14 +144,11 @@ static class Lima
         );
         byte* im2 = (byte*)data2.Scan0.ToPointer();
 
-        int width = data1.Width;
-        int stride = data1.Stride;
-
-        Parallel.For(0, data1.Height, j =>
+        for (int j = 0; j < data1.Height; j++)
         {
-            for (int i = 0; i < width; i++)
+            for (int i = 0; i < data1.Width; i++)
             {
-                int index = 3 * i + j * stride;
+                int index = 3 * i + j * data1.Stride;
 
                 int db = im1[index + 0] - im2[index + 0];
                 int dg = im1[index + 1] - im2[index + 1];
@@ -203,17 +178,25 @@ static class Lima
                     im2[index + 2] = (byte)(0);
                 }
             }
-        });
+        }
 
         bmp1.UnlockBits(data1);
         bmp2.UnlockBits(data2);
     }
 
-
-    static public unsafe void correcaoLuminosidade(float mediaBg, Bitmap bmp2, int[] hist2)
+    static public unsafe void correcaoLuminosidade(Bitmap bmp1, int[] hist1, Bitmap bmp2, int[] hist2)
     {
         float sum = 0;
         float count = 0;
+        for (int k = 0; k < hist1.Length; k++)
+        {
+            count += hist1[k];
+            sum += k * hist1[k];
+        }
+        float media1 = sum / count;
+
+        sum = 0;
+        count = 0;
         for (int k = 0; k < hist2.Length; k++)
         {
             count += hist2[k];
@@ -221,6 +204,11 @@ static class Lima
         }
         float media2 = sum / count;
 
+        var data = bmp1.LockBits(
+            new Rectangle(0, 0, bmp1.Width, bmp1.Height),
+            ImageLockMode.ReadOnly,
+            PixelFormat.Format24bppRgb
+        );
         var data2 = bmp2.LockBits(
             new Rectangle(0, 0, bmp2.Width, bmp2.Height),
             ImageLockMode.ReadWrite,
@@ -228,16 +216,13 @@ static class Lima
         );
 
         byte* im = (byte*)data2.Scan0.ToPointer();
-        float alfa = mediaBg / media2;
+        float alfa = media1 / media2;
 
-        int width = bmp2.Width;
-        int stride = data2.Stride;
-
-        Parallel.For(0, bmp2.Height, j =>
+        for (int j = 0; j < bmp2.Height; j++)
         {
-            for (int i = 0; i < width; i++)
+            for (int i = 0; i < bmp2.Width; i++)
             {
-                int index = 3 * i + j * stride;
+                int index = 3 * i + j * data2.Stride;
 
                 im[index + 0] = (byte)(im[index + 0] * alfa);
                 im[index + 1] = (byte)(im[index + 1] * alfa);
@@ -250,22 +235,10 @@ static class Lima
                 if (im[index + 2] > 255)
                     im[index + 2] = 255;
             }
-        });
-
-        bmp2.UnlockBits(data2);
-    }
-
-
-    static public float mediaBg(int[] histBg)
-    {
-        float sum = 0;
-        float count = 0;
-        for (int k = 0; k < histBg.Length; k++)
-        {
-            count += histBg[k];
-            sum += k * histBg[k];
         }
-        return sum / count;
+
+        bmp1.UnlockBits(data);
+        bmp2.UnlockBits(data2);
     }
 }
 

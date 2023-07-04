@@ -72,7 +72,8 @@ public class WebCamManager
         {
             if (im is not null)
                 im.Dispose();
-            this.im = (Bitmap)eventArgs.Frame.Clone();
+            this.im = (Bitmap)eventArgs.Frame
+                .GetThumbnailImage(480, 320, null, IntPtr.Zero);
 
             if (requests.Count == 0)
                 return;

@@ -16,6 +16,7 @@ namespace Webcam
     {
         WebCamManager cam;
         Bitmap bg = null;
+        float bgMedia = 0;
 
         bool useBlur = true;
         int blur = 0;
@@ -37,8 +38,12 @@ namespace Webcam
                     case Keys.Space:
                         if (this.bg is null)
                         {
-                            cam.RequestScreenshot(im => this.bg = UseBlur(im, blur));
-                            this.bgBlur = blur;
+                            cam.RequestScreenshot(im =>
+                            {
+                                this.bg = UseBlur(im, blur);
+                                this.bgMedia = mediaBg(histogram(this.bg));
+                                this.bgBlur = blur;
+                            });
                         }
                         else
                         {
@@ -73,13 +78,16 @@ namespace Webcam
             cam.AddHandler(25, im =>
             {
                 label1.Text =
-                    "Blur/Quant: \n" + (this.useBlur ? "on/" : "off/") + this.blur.ToString() + "\n\n" +
+                    "Blur/Quant: \n" + (this.useBlur ? "off/" : "on/") + this.blur.ToString() + "\n\n" +
                     "BlurBg: " + this.bgBlur.ToString();
 
-                if (!this.useBlur)
-                    im = UseBlur(im, blur);
-                im = flame(bg, im);
-                pbWebcam.Image = im;
+                lock (cam)
+                {
+                    if (!this.useBlur)
+                        im = UseBlur(im, blur);
+                    im = flame(bgMedia, bg, im);
+                    pbWebcam.Image = im;
+                }
             });
 
 

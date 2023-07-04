@@ -130,26 +130,35 @@ static class Blur
             Parallel.Invoke(
                 () =>
                 {
-                    setInitial(img, bp, 0);
-                    setLine(img, bp, 0, input.Width);
-                    setColumn(img, bp, 0, input.Height, input.Width, data.Stride);
-                    fill(img, bp, 0, input.Height, input.Width, data.Stride);
+                    lock (input)
+                    {
+                        setInitial(img, bp, 0);
+                        setLine(img, bp, 0, input.Width);
+                        setColumn(img, bp, 0, input.Height, input.Width, data.Stride);
+                        fill(img, bp, 0, input.Height, input.Width, data.Stride);
+                    }
                 },
 
                 () =>
                 {
-                    setInitial(img, gp, 1);
-                    setLine(img, gp, 1, input.Width);
-                    setColumn(img, gp, 1, input.Height, input.Width, data.Stride);
-                    fill(img, gp, 1, input.Height, input.Width, data.Stride);
+                    lock (input)
+                    {
+                        setInitial(img, gp, 1);
+                        setLine(img, gp, 1, input.Width);
+                        setColumn(img, gp, 1, input.Height, input.Width, data.Stride);
+                        fill(img, gp, 1, input.Height, input.Width, data.Stride);
+                    }
                 },
 
                 () =>
                 {
-                    setInitial(img, rp, 2);
-                    setLine(img, rp, 2, input.Width);
-                    setColumn(img, rp, 2, input.Height, input.Width, data.Stride);
-                    fill(img, rp, 2, input.Height, input.Width, data.Stride);
+                    lock (input)
+                    {
+                        setInitial(img, rp, 2);
+                        setLine(img, rp, 2, input.Width);
+                        setColumn(img, rp, 2, input.Height, input.Width, data.Stride);
+                        fill(img, rp, 2, input.Height, input.Width, data.Stride);
+                    }
                 }
             );
         }

@@ -51,7 +51,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(38, 15);
             this.label1.TabIndex = 2;
-            this.label1.Text = "Blur: ";
+            this.label1.Text = "Blur/Quant: \noff/0\n\nBlurBg: 0";
             this.label1.Font = new Font("Arial", 25,FontStyle.Bold);
             // 
             // label2
