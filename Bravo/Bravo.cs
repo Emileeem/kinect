@@ -3,9 +3,22 @@ using System.Drawing.Imaging;
 
 namespace Bravo;
 
-static class Blur
+// Blur Resumo:
+// É a classe que guarda todas os metódos para construir a imagem borrada.
+
+class Blur
 {
-    static public unsafe Bitmap UseBlur(Bitmap input, int n)
+    // UseBlur Resumo:
+    // Aplica blur em uma imagem.
+    //
+    // Parâmetros:
+    //     (Bitmap) input    imagem na qual o efeito de blur será aplicado
+    //     (int) n           intensidade do blur, se o valor sobrepor o tamanho da imagem nada irá acontecer
+    //
+    // Retorna:
+    //     Imagem Bitmap com o efeito de blur aplicado.
+
+    public unsafe Bitmap UseBlur(Bitmap input, int n)
     {
         long[] r, g, b;
         (r, g, b) = integral(input);
@@ -28,41 +41,76 @@ static class Blur
         return result;
     }
 
-    static private unsafe void SetImage(byte* im, long* r, long* g, long* b, int width, int height, int stride, int n)
+    // SetImage Resumo:
+    // Calcula a média dos pixeis e aplica o blur na imagem resultante.
+    //
+    // Parâmetros:
+    //     (byte*) im     imagem na qual o efeito de blur será aplicado
+    //     (long*) r      bytes de cor vermelha dos pixeis da imagem
+    //     (long*) g      bytes de cor verde dos pixeis da imagem
+    //     (long*) b      bytes de cor azul dos pixeis da imagem
+    //     (int) width    largura da imagem
+    //     (int) height   altura da imagem
+    //     (int) stride   largura da imagem mais os possíveis pixeis que podem sobrepoer essa largura
+    //     (int) n        intensidade do blur, se o valor sobrepor o tamanho da imagem nada irá acontecer
+
+    private unsafe void SetImage(byte* im, long* r, long* g, long* b, int width, int height, int stride, int n)
     {
         int side = 2 * n + 1;
         float area = side * side;
 
-        int cantoA = -(n + 1) - (n + 1) * width; // nao ta aqui
-        int cantoB = n - (n + 1) * width; // nao ta aqui
-        int cantoC = -(n + 1) + n * width; // nao ta aqui
-        int cantoD = n + n * width; // nao ta aqui
-
-        int desloc = (n + 1) * (width + 1); // nao ta aqui
-        im += (n + 1) * (stride + 3); // nao ta aqui
+        int desloc = n + 1;
+        im += (n + 1) * 3;
         b += desloc;
         g += desloc;
         r += desloc;
 
-        int subDesloc = 2 * n + 1;
-
-        for (int j = n + 1; j < height - n; j++)
+        Parallel.For(n + 1, height - n, j =>
         {
-            for (int i = n + 1; i < width - n; i++, im += 3, b++, g++, r++)
+            int cantoA = -(n + 1) - (n + 1) * width;
+            int cantoB = n - (n + 1) * width;
+            int cantoC = -(n + 1) + n * width;
+            int cantoD = n + n * width;
+
+            var larea = area;
+            var lwidth = width;
+            var lstride = stride;
+            int subDesloc = 2 * n + 1;
+
+            var lb = b;
+            var lg = g;
+            var lr = r;
+            var lim = im;
+
+            lb += j * lwidth;
+            lg += j * lwidth;
+            lr += j * lwidth;
+            lim += j * lstride; 
+
+            for (int i = n + 1; i < lwidth - n; i++, lim += 3, lb++, lg++, lr++)
             {
-                *(im + 0) = (byte)((*(b + cantoD) + *(b + cantoA) - *(b + cantoB) - *(b + cantoC)) / area);
-                *(im + 1) = (byte)((*(g + cantoD) + *(g + cantoA) - *(g + cantoB) - *(g + cantoC)) / area);
-                *(im + 2) = (byte)((*(r + cantoD) + *(r + cantoA) - *(r + cantoB) - *(r + cantoC)) / area);
+                *(lim + 0) = (byte)((*(lb + cantoD) + *(lb + cantoA) - *(lb + cantoB) - *(lb + cantoC)) / larea);
+                *(lim + 1) = (byte)((*(lg + cantoD) + *(lg + cantoA) - *(lg + cantoB) - *(lg + cantoC)) / larea);
+                *(lim + 2) = (byte)((*(lr + cantoD) + *(lr + cantoA) - *(lr + cantoB) - *(lr + cantoC)) / larea);
             }
 
-            r += subDesloc;
-            g += subDesloc;
-            b += subDesloc;
-            im += 6 * n + 3 + stride - 3 * width; // nao ta aqui
-        }
+            lr += subDesloc;
+            lg += subDesloc;
+            lb += subDesloc;
+            lim += 6 * n + 3 + lstride - 3 * lwidth;
+        }); 
     }
 
-    static private unsafe (long[] r, long[] g, long[] b) integral(Bitmap input)
+    // Integral Resumo:
+    // Cria uma imagem integral a partir da imagem original.
+    //
+    // Parâmetros:
+    //     (Bitmap) input  imagem que originará a imagem integral
+    //
+    // Retorna:
+    //     Retorna separadamente a integral dos bytes R G B de cada pixel da imagem referenciada.
+
+    private unsafe (long[] r, long[] g, long[] b) integral(Bitmap input)
     {
         var data = input.LockBits(
             new Rectangle(0, 0, input.Width, input.Height),
@@ -79,10 +127,31 @@ static class Blur
             var img = (byte*)data.Scan0;
             long* rp = rPointer, gp = gPointer, bp = bPointer;
 
-            setInitial(img, rp, gp, bp);
-            setLine(img, rp, gp, bp, input.Width);
-            setColumn(img, rp, gp, bp, input.Height, input.Width, data.Stride);
-            fill(img, rp, gp, bp, input.Height, input.Width, data.Stride);
+            Parallel.Invoke(
+                () =>
+                {
+                    setInitial(img, bp, 0);
+                    setLine(img, bp, 0, input.Width);
+                    setColumn(img, bp, 0, input.Height, input.Width, data.Stride);
+                    fill(img, bp, 0, input.Height, input.Width, data.Stride);
+                },
+
+                () =>
+                {
+                    setInitial(img, gp, 1);
+                    setLine(img, gp, 1, input.Width);
+                    setColumn(img, gp, 1, input.Height, input.Width, data.Stride);
+                    fill(img, gp, 1, input.Height, input.Width, data.Stride);
+                },
+
+                () =>
+                {
+                    setInitial(img, rp, 2);
+                    setLine(img, rp, 2, input.Width);
+                    setColumn(img, rp, 2, input.Height, input.Width, data.Stride);
+                    fill(img, rp, 2, input.Height, input.Width, data.Stride);
+                }
+            );
         }
 
         input.UnlockBits(data);
@@ -90,61 +159,82 @@ static class Blur
         return (r, g, b);
     }
 
-    static unsafe void setInitial(byte* im, long* r, long* g, long* b)
-    {
-        *b = *(im + 0);
-        *g = *(im + 1);
-        *r = *(im + 2);
-    }
+    // setInitial Resumo:
+    // Cálculo do canal R G B que incrementa na imagem
+    // 
+    // Parâmetros:
+    //     (*byte) im     imagem que será usada de base para fazer os cáculos
+    //     (*long) c      define em qual canal de cor que será aplicado o metódo 
+    //     (int) channel  define o canal de cor na imagem (0, 1 e 2)       
 
-    static unsafe void setLine(byte* im, long* r, long* g, long* b, int width)
+    unsafe void setInitial(byte* im, long* c, int channel)
+        => *c = *(im + channel);
+
+    // setLine Resumo:
+    // Incrementação do efeito de blur por canais separados nos pixeis da primeira linha da imagem.
+    //
+    // Parâmetros:
+    //     (*byte) im     imagem que será usada de base para fazer os cáculos
+    //     (*long) c      define em qual canal de cor que será aplicado o metódo 
+    //     (int) channel  define o canal de cor na imagem (0, 1 e 2)  
+    //     (int) width    largura da imagem   
+
+    unsafe void setLine(byte* im, long* c, int channel, int width)
     {
-        b++;
-        g++;
-        r++;
-        for (int i = 1; i < width; i++, r++, g++, b++, im += 3)
+        c++;
+        for (int i = 1; i < width; i++, c++, im += 3)
         {
-            *b = *(im + 0) + *(b - 1);
-            *g = *(im + 1) + *(g - 1);
-            *r = *(im + 2) + *(r - 1);
+            *c = *(im + channel) + *(c - 1);
         }
     }
 
-    static unsafe void setColumn(byte* im, long* r, long* g, long* b, int height, int width, int stride)
-    {
-        b += width;
-        g += width;
-        r += width;
+    // setColumn Resumo:
+    // Incrementação do efeito de blur por canais separados nos pixeis da primeira coluna da imagem.
+    //
+    // Parâmetros:
+    //     (*byte) im     imagem que será usada de base para fazer os cáculos
+    //     (*long) c      define em qual canal de cor que será aplicado o metódo 
+    //     (int) channel  define o canal de cor na imagem (0, 1 e 2)
+    //     (int) width    largura da imagem
+    //     (int) height   altura da imagem
+    //     (int) stride   largura da imagem mais os possíveis pixeis que podem sobrepoer essa largura
 
-        for (int i = 1; i < height; i++, r += width, g += width, b += width, im += stride)
+    unsafe void setColumn(byte* im, long* c, int channel, int height, int width, int stride)
+    {
+        c += width;
+
+        for (int i = 1; i < height; i++, c += width, im += stride)
         {
-            *b = *(im + 0) + *(b - width);
-            *g = *(im + 1) + *(g - width);
-            *r = *(im + 2) + *(r - width);
+            *c = *(im + channel) + *(c - width);
         }
     }
 
-    static unsafe void fill(byte* im, long* r, long* g, long* b, int height, int width, int stride)
+    // Fill Resumo:
+    // Incrementação do efeito de blur por canais separados nos pixeis de todo o resto da imagem.
+    //
+    // Parâmetros:
+    //     (*byte) im     imagem que será usada de base para fazer os cáculos
+    //     (*long) c      define em qual canal de cor que será aplicado o metódo 
+    //     (int) channel  define o canal de cor na imagem (0, 1 e 2)
+    //     (int) width    largura da imagem
+    //     (int) height   altura da imagem
+    //     (int) stride   largura da imagem mais os possíveis pixeis que podem sobrepoer essa largura
+
+    unsafe void fill(byte* im, long* c, int channel, int height, int width, int stride)
     {
         int intWidth = width + 1;
 
-        b += intWidth;
-        g += intWidth;
-        r += intWidth;
+        c += intWidth;
         im += stride;
 
-        var endj = r + (height - 1) * (width - 1);
-        for (; r < endj; b++, g++, r++, im += 3)
+        var endj = c + (height - 1) * (width - 1);
+        for (; c < endj; c++, im += 3)
         {
-            var endi = r + width - 1;
-            while (r < endi)
+            var endi = c + width - 1;
+            while (c < endi)
             {
-                *b = *(im + 0) + *(b - 1) + *(b - width) - *(b - intWidth);
-                *g = *(im + 1) + *(g - 1) + *(g - width) - *(g - intWidth);
-                *r = *(im + 2) + *(r - 1) + *(r - width) - *(r - intWidth);
-                b++;
-                g++;
-                r++;
+                *c = *(im + channel) + *(c - 1) + *(c - width) - *(c - intWidth);
+                c++;
                 im += 3;
             }
             im += stride - 3 * width;
