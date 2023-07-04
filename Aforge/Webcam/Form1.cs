@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using AForge.Video.DirectShow;
 using static Lima.Lima;
 using Bravo;
+using Eco;
 
 namespace Webcam
 {
@@ -86,6 +87,9 @@ namespace Webcam
                     if (!this.useBlur)
                         im = Blur.Apply(im, blur);
                     im = flame(bgMedia, bg, im);
+                    if (this.bg is not null)
+                        im = Esqueleto.genEsqueleto(im);
+
                     pbWebcam.Image = im;
                 }
             });
