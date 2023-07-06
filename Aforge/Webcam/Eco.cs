@@ -11,6 +11,7 @@ static class Esqueleto
 
     static public unsafe Bitmap genEsqueleto(Bitmap imagem)
     {
+
         //Coordenadas extremidades
         int xEsquerda = int.MaxValue;
         int xDireita = 0;
@@ -23,6 +24,11 @@ static class Esqueleto
         int yAbaixo = 0;
 
         int count = 0;
+
+        byte b = 0;
+        byte g = 0;
+        byte r = 0;
+
 
         var data = imagem.LockBits(
             new Rectangle(0, 0, imagem.Width, imagem.Height),
@@ -40,9 +46,9 @@ static class Esqueleto
             for (int i = 0; i < imagem.Width; i++)
             {
                 int index = 3 * i + j * stride;
-                byte b = im[index + 0];
-                byte g = im[index + 1];
-                byte r = im[index + 2];
+                b = im[index + 0];
+                g = im[index + 1];
+                r = im[index + 2];
 
                 if (b == 0 && r == 0 && g == 0)
                 {
@@ -116,9 +122,9 @@ static class Esqueleto
             for (int i = xEsquerda; i < xEsquerda + 70; i++)
             {
                 int index = 3 * i + j * stride;
-                byte b = im[index + 0];
-                byte g = im[index + 1];
-                byte r = im[index + 2];
+                b = im[index + 0];
+                g = im[index + 1];
+                r = im[index + 2];
 
                 if (b == 0 && r == 0 && g == 0)
                 {
@@ -139,9 +145,9 @@ static class Esqueleto
             for (int i = xDireita - 40; i < xDireita; i++)
             {
                 int index = 3 * i + j * stride;
-                byte b = im[index + 0];
-                byte g = im[index + 1];
-                byte r = im[index + 2];
+                b = im[index + 0];
+                g = im[index + 1];
+                r = im[index + 2];
 
                 if (b == 0 && r == 0 && g == 0)
                 {
@@ -162,9 +168,9 @@ static class Esqueleto
             for (int i = xAcima - 70; i < xAcima + 70; i++)
             {
                 int index = 3 * i + j * stride;
-                byte b = im[index + 0];
-                byte g = im[index + 1];
-                byte r = im[index + 2];
+                b = im[index + 0];
+                g = im[index + 1];
+                r = im[index + 2];
 
                 if (b == 0 && r == 0 && g == 0)
                 {
@@ -194,9 +200,9 @@ static class Esqueleto
             for (int i = 0; i < imagem.Width; i++)
             {
                 int index = 3 * i + j * stride;
-                byte b = im[index + 0];
-                byte g = im[index + 1];
-                byte r = im[index + 2];
+                b = im[index + 0];
+                g = im[index + 1];
+                r = im[index + 2];
 
                 if (b == 0 && r == 0 && g == 0)
                 {
@@ -237,9 +243,9 @@ static class Esqueleto
             for (int i = xEsquerdaPerna; i < xMeioRetanguloPerna; i++)
             {
                 int index = 3 * i + j * stride;
-                byte b = im[index + 0];
-                byte g = im[index + 1];
-                byte r = im[index + 2];
+                b = im[index + 0];
+                g = im[index + 1];
+                r = im[index + 2];
 
                 if (b == 0 && r == 0 && g == 0)
                 {
@@ -260,9 +266,9 @@ static class Esqueleto
         {
 
             int index = 3 * i + yAbaixoPernaEsquerda * stride;
-            byte b = im[index + 0];
-            byte g = im[index + 1];
-            byte r = im[index + 2];
+            b = im[index + 0];
+            g = im[index + 1];
+            r = im[index + 2];
 
             if (b == 0 && r == 0 && g == 0)
             {
@@ -281,9 +287,9 @@ static class Esqueleto
             for (int i = xMeioRetanguloPerna; i < xDireitaPerna; i++)
             {
                 int index = 3 * i + j * stride;
-                byte b = im[index + 0];
-                byte g = im[index + 1];
-                byte r = im[index + 2];
+                b = im[index + 0];
+                g = im[index + 1];
+                r = im[index + 2];
 
                 if (b == 0 && r == 0 && g == 0)
                 {
@@ -304,9 +310,9 @@ static class Esqueleto
         {
 
             int index = 3 * i + yAbaixoPernaDireita * stride;
-            byte b = im[index + 0];
-            byte g = im[index + 1];
-            byte r = im[index + 2];
+            b = im[index + 0];
+            g = im[index + 1];
+            r = im[index + 2];
 
             if (b == 0 && r == 0 && g == 0)
             {
@@ -366,9 +372,9 @@ static class Esqueleto
         for (int j = 0; j < altura; j++)
         {
             int index = 3 * xMeioMaoOmbroEsquerdo + j * stride;
-            byte b = im[index + 0];
-            byte g = im[index + 1];
-            byte r = im[index + 2];
+            b = im[index + 0];
+            g = im[index + 1];
+            r = im[index + 2];
 
             if (b == 0 && r == 0 && g == 0)
             {
@@ -393,9 +399,9 @@ static class Esqueleto
         for (int j = 0; j < imagem.Height; j++)
         {
             int index = 3 * xMeioMaoOmbroDireito + j * stride;
-            byte b = im[index + 0];
-            byte g = im[index + 1];
-            byte r = im[index + 2];
+            b = im[index + 0];
+            g = im[index + 1];
+            r = im[index + 2];
             if (b == 0 && r == 0 && g == 0)
             {
                 if (j > yAbaixoCotoveloDireito)

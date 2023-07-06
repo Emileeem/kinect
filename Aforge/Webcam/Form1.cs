@@ -20,7 +20,8 @@ namespace Webcam
         float bgMedia = 0;
 
         bool useBlur = true;
-        int blur = 0;
+        bool useEsq = false;
+        int blur = 10;
         int bgBlur = 0;
 
         public Form1()
@@ -53,6 +54,9 @@ namespace Webcam
                         }
                         break;
                     case Keys.Enter:
+                        if (this.useEsq)
+                            this.useEsq = false;
+                        else this.useEsq = true;
                         break;
                     case Keys.Tab:
                         if (this.useBlur)
@@ -87,8 +91,15 @@ namespace Webcam
                     if (!this.useBlur)
                         im = Blur.Apply(im, blur);
                     im = flame(bgMedia, bg, im);
-                    if (this.bg is not null)
-                        im = Esqueleto.genEsqueleto(im);
+                    if (this.useEsq)
+                        try
+                        {
+                            im = Esqueleto.genEsqueleto(im);
+                        }
+                        catch (Exception)
+                        {
+                            
+                        }
 
                     pbWebcam.Image = im;
                 }
