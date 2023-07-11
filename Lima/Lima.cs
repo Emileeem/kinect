@@ -3,7 +3,7 @@ namespace Lima;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
-using Oscar;
+using Kilo;
 
 static class Lima
 {
@@ -17,11 +17,10 @@ static class Lima
         correcaoLuminosidade(mediaBg, img2, hist2);
 
         var subTransformed = histSubT(img1, img2);
-        float kmeans = Kmeans.KmeansMethod(subTransformed);
+        float kmeans = Threshold.Kmeans3D(subTransformed);
 
         Random random = new Random();
         binarize(img1, img2, ((float)(1.09), (float)(1.21), (float)(1.19), (float)(-281)));
-
 
         return img2;
     }

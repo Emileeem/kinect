@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Oscar\Oscar.csproj" />
+    <ProjectReference Include="..\Kilo\Kilo.csproj" />
   </ItemGroup>
 
 </Project>
