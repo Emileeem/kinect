@@ -3,6 +3,8 @@ namespace Lima;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Threading;
+using System.Threading.Tasks;
 using Kilo;
 using Papa;
 
