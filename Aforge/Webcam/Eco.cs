@@ -11,24 +11,20 @@ static class Esqueleto
 
     static public unsafe Bitmap genEsqueleto(Bitmap imagem)
     {
-
         //Coordenadas extremidades
         int xEsquerda = int.MaxValue;
-        int xDireita = 0;
-        int xAcima = 0;
-        int xAbaixo = 0;
-
         int yEsquerda = 0;
+
+        int xDireita = 0;
         int yDireita = 0;
+
+        int xAcima = 0;
         int yAcima = int.MaxValue;
+
+        int xAbaixo = 0;
         int yAbaixo = 0;
 
         int count = 0;
-
-        byte b = 0;
-        byte g = 0;
-        byte r = 0;
-
 
         var data = imagem.LockBits(
             new Rectangle(0, 0, imagem.Width, imagem.Height),
@@ -46,9 +42,9 @@ static class Esqueleto
             for (int i = 0; i < imagem.Width; i++)
             {
                 int index = 3 * i + j * stride;
-                b = im[index + 0];
-                g = im[index + 1];
-                r = im[index + 2];
+                byte b = im[index + 0];
+                byte g = im[index + 1];
+                byte r = im[index + 2];
 
                 if (b == 0 && r == 0 && g == 0)
                 {
@@ -122,9 +118,9 @@ static class Esqueleto
             for (int i = xEsquerda; i < xEsquerda + 70; i++)
             {
                 int index = 3 * i + j * stride;
-                b = im[index + 0];
-                g = im[index + 1];
-                r = im[index + 2];
+                byte b = im[index + 0];
+                byte g = im[index + 1];
+                byte r = im[index + 2];
 
                 if (b == 0 && r == 0 && g == 0)
                 {
@@ -145,9 +141,9 @@ static class Esqueleto
             for (int i = xDireita - 40; i < xDireita; i++)
             {
                 int index = 3 * i + j * stride;
-                b = im[index + 0];
-                g = im[index + 1];
-                r = im[index + 2];
+                byte b = im[index + 0];
+                byte g = im[index + 1];
+                byte r = im[index + 2];
 
                 if (b == 0 && r == 0 && g == 0)
                 {
@@ -165,12 +161,12 @@ static class Esqueleto
 
         for (int j = yAcima; j < yAcima + 120; j++)
         {
-            for (int i = xAcima - 70; i < xAcima + 70; i++)
+            for (int i = xAcima - 150; i < xAcima + 150; i++)
             {
                 int index = 3 * i + j * stride;
-                b = im[index + 0];
-                g = im[index + 1];
-                r = im[index + 2];
+                byte b = im[index + 0];
+                byte g = im[index + 1];
+                byte r = im[index + 2];
 
                 if (b == 0 && r == 0 && g == 0)
                 {
@@ -200,9 +196,9 @@ static class Esqueleto
             for (int i = 0; i < imagem.Width; i++)
             {
                 int index = 3 * i + j * stride;
-                b = im[index + 0];
-                g = im[index + 1];
-                r = im[index + 2];
+                byte b = im[index + 0];
+                byte g = im[index + 1];
+                byte r = im[index + 2];
 
                 if (b == 0 && r == 0 && g == 0)
                 {
@@ -243,9 +239,9 @@ static class Esqueleto
             for (int i = xEsquerdaPerna; i < xMeioRetanguloPerna; i++)
             {
                 int index = 3 * i + j * stride;
-                b = im[index + 0];
-                g = im[index + 1];
-                r = im[index + 2];
+                byte b = im[index + 0];
+                byte g = im[index + 1];
+                byte r = im[index + 2];
 
                 if (b == 0 && r == 0 && g == 0)
                 {
@@ -266,9 +262,9 @@ static class Esqueleto
         {
 
             int index = 3 * i + yAbaixoPernaEsquerda * stride;
-            b = im[index + 0];
-            g = im[index + 1];
-            r = im[index + 2];
+            byte b = im[index + 0];
+            byte g = im[index + 1];
+            byte r = im[index + 2];
 
             if (b == 0 && r == 0 && g == 0)
             {
@@ -287,9 +283,9 @@ static class Esqueleto
             for (int i = xMeioRetanguloPerna; i < xDireitaPerna; i++)
             {
                 int index = 3 * i + j * stride;
-                b = im[index + 0];
-                g = im[index + 1];
-                r = im[index + 2];
+                byte b = im[index + 0];
+                byte g = im[index + 1];
+                byte r = im[index + 2];
 
                 if (b == 0 && r == 0 && g == 0)
                 {
@@ -310,9 +306,9 @@ static class Esqueleto
         {
 
             int index = 3 * i + yAbaixoPernaDireita * stride;
-            b = im[index + 0];
-            g = im[index + 1];
-            r = im[index + 2];
+            byte b = im[index + 0];
+            byte g = im[index + 1];
+            byte r = im[index + 2];
 
             if (b == 0 && r == 0 && g == 0)
             {
@@ -372,9 +368,9 @@ static class Esqueleto
         for (int j = 0; j < altura; j++)
         {
             int index = 3 * xMeioMaoOmbroEsquerdo + j * stride;
-            b = im[index + 0];
-            g = im[index + 1];
-            r = im[index + 2];
+            byte b = im[index + 0];
+            byte g = im[index + 1];
+            byte r = im[index + 2];
 
             if (b == 0 && r == 0 && g == 0)
             {
@@ -399,9 +395,9 @@ static class Esqueleto
         for (int j = 0; j < imagem.Height; j++)
         {
             int index = 3 * xMeioMaoOmbroDireito + j * stride;
-            b = im[index + 0];
-            g = im[index + 1];
-            r = im[index + 2];
+            byte b = im[index + 0];
+            byte g = im[index + 1];
+            byte r = im[index + 2];
             if (b == 0 && r == 0 && g == 0)
             {
                 if (j > yAbaixoCotoveloDireito)
@@ -417,20 +413,115 @@ static class Esqueleto
         int yCotoveloDireito = yAbaixoCotoveloDireito - (yAbaixoCotoveloDireito - yAcimaCotoveloDireito) / 2;
 
         int xMeioTronco = xAcima;
-        int yMeioTronco = yMeioCintura - (yMeioCintura - yAcima) / 3;
+        // int yMeioTronco = yMeioCintura - (yMeioCintura - yAcima) / 3;
 
         int DistanciaBracoEsquerdoTorso = (int)Math.Sqrt(Math.Pow(xTorso - xEsquerda, 2) + Math.Pow(yTorso - yEsquerda, 2));
         int DistanciaTorsoBracoDireito = (int)Math.Sqrt(Math.Pow(xDireita - xTorso, 2) + Math.Pow(yDireita - yTorso, 2));
-        int DistanciaCabecaMeioTronco = (int)Math.Sqrt(Math.Pow(xAcima - xMeioTronco, 2) + Math.Pow(yAcima - yMeioTronco, 2));
+        int DistanciaCabecaBarriga = 2 * ((int)Math.Sqrt(Math.Pow(xAcima - xMeioCintura, 2) + Math.Pow(yAcima - yMeioCintura, 2))) / 3;
 
-        // WriteLine(DistanciaBracoEsquerdoTorso);
-        // WriteLine(DistanciaTorsoBracoDireito);
-        // WriteLine(DistanciaCabecaMeioTronco);
+        bool maoOuBracoEsquerdo;
+        bool maoOuBracoDireito;
 
-        // if (DistanciaBracoEsquerdoTorso > DistanciaCabecaMeioTronco)
-        //     WriteLine("MÃO");
-        // else
-        //     WriteLine("COTOVELO");
+        int xMaoEsquerda = 0;
+        int yMaoEsquerda = int.MaxValue;
+
+        if (DistanciaBracoEsquerdoTorso > DistanciaCabecaBarriga)
+            maoOuBracoEsquerdo = true;
+        else
+        {
+            maoOuBracoEsquerdo = false;
+
+            for (int j = 0; j < imagem.Height; j++)
+            {
+                for (int i = 0; i < xEsquerdaCabeca; i++)
+                {
+                    int index = 3 * i + j * stride;
+                    byte b = im[index + 0];
+                    byte g = im[index + 1];
+                    byte r = im[index + 2];
+                    if (b == 0 && r == 0 && g == 0)
+                    {
+                        if (j < yMaoEsquerda)
+                        {
+                            yMaoEsquerda = j;
+                            xMaoEsquerda = i;
+                        }
+                    }
+                }
+            }
+        }
+
+        int xMaoDireita = 0;
+        int yMaoDireita = int.MaxValue;
+
+
+        if (DistanciaTorsoBracoDireito > DistanciaCabecaBarriga)
+            maoOuBracoDireito = true;
+        else
+        {
+            maoOuBracoDireito = false;
+
+            for (int j = 0; j < imagem.Height; j++)
+            {
+                for (int i = xDireitaCabeca; i < imagem.Width; i++)
+                {
+                    int index = 3 * i + j * stride;
+                    byte b = im[index + 0];
+                    byte g = im[index + 1];
+                    byte r = im[index + 2];
+                    if (b == 0 && r == 0 && g == 0)
+                    {
+                        if (j < yMaoDireita)
+                        {
+                            yMaoDireita = j;
+                            xMaoDireita = i;
+                        }
+                    }
+                }
+            }
+        }
+
+        int xEsquerdaCotovelo = int.MaxValue;
+
+        for (int i = 0; i < xTorso; i++)
+        {
+            int index = 3 * i + yCotoveloEsquerdo * stride;
+            byte b = im[index + 0];
+            byte g = im[index + 1];
+            byte r = im[index + 2];
+
+            if (b == 0 && r == 0 && g == 0)
+            {
+                if (i < xEsquerdaCotovelo)
+                {
+                    xEsquerdaCotovelo = i;
+                }
+            }
+        }
+
+        int xDireitaCotovelo = 0;
+
+        for (int i = xTorso; i < imagem.Width; i++)
+        {
+            int index = 3 * i + yCotoveloDireito * stride;
+            byte b = im[index + 0];
+            byte g = im[index + 1];
+            byte r = im[index + 2];
+
+            if (b == 0 && r == 0 && g == 0)
+            {
+                if (i > xDireitaCotovelo)
+                {
+                    xDireitaCotovelo = i;
+                }
+            }
+        }
+
+        int x34TorsoEsquerdo = (2 * xTorso + xCotoveloEsquerdo) / 3;
+        int y34TorsoEsquerdo = (2 * yTorso + yCotoveloEsquerdo) / 3;
+
+        int x34TorsoDireito = (2 * xTorso + xCotoveloDireito) / 3;
+        int y34TorsoDireito = (2 * yTorso + yCotoveloDireito) / 3;
 
         imagem.UnlockBits(data);
 
@@ -450,6 +541,8 @@ static class Esqueleto
         Point pointOmbroDireito = new(xOmbroDireito, yOmbroDireito);
 
         Point pointTorso = new(xTorso, yTorso);
+        Point pointTorsoEsquerdo = new(x34TorsoEsquerdo, yTorso);
+        Point pointTorsoDireito = new(x34TorsoDireito, yTorso);
 
         Point pointCintura = new(xMeioCintura, yMeioCintura);
 
@@ -459,11 +552,17 @@ static class Esqueleto
         Point pointPeEsquerdo = new(xMeioPernaEsquerda, yPeEsquerdo);
         Point pointPeDireito = new(xMeioPernaDireita, yPeDireito);
 
+        Point pointMaoEsquerda = new(xMaoEsquerda, yMaoEsquerda);
+        Point pointMaoDireita = new(xMaoDireita, yMaoDireita);
+
+        Point NovoCotoveloEsquerdo = new(xCotoveloEsquerdo - (xCotoveloEsquerdo - xEsquerdaCotovelo) / 2, yCotoveloEsquerdo);
+        Point NovoCotoveloDireito = new(xDireitaCotovelo - (xDireitaCotovelo - xCotoveloDireito) / 2, yCotoveloDireito);
+
         Point[] VerticalEsquerdo =
         {
         pointCabeca,
         pointCintura,
-        pointPeEsquerdo
+        //pointPeEsquerdo
     };
 
         Point[] VerticalEsquerdoCompleto =
@@ -471,14 +570,14 @@ static class Esqueleto
         pointCabeca,
         pointCintura,
         pointJoelhoEsquerdo,
-        pointPeEsquerdo
+        //pointPeEsquerdo
     };
 
         Point[] VerticalDireito =
         {
         pointCabeca,
         pointCintura,
-        pointPeDireito
+        //pointPeDireito
     };
 
         Point[] VerticalDireitoCompleto =
@@ -486,18 +585,18 @@ static class Esqueleto
         pointCabeca,
         pointCintura,
         pointJoelhoDireito,
-        pointPeDireito
+        //pointPeDireito
     };
 
         Point[] Horizontal =
         {
-        pointEsquerda,
-        pointCotoveloEsquerdo,
-        pointOmbroEsquerdo,
+        maoOuBracoEsquerdo ? pointEsquerda : pointMaoEsquerda,
+        maoOuBracoEsquerdo ? pointCotoveloEsquerdo : NovoCotoveloEsquerdo,
+        maoOuBracoEsquerdo ? pointOmbroEsquerdo : pointTorsoEsquerdo,
         pointTorso,
-        pointOmbroDireito,
-        pointCotoveloDireito,
-        pointDireita,
+        maoOuBracoDireito ? pointOmbroDireito : pointTorsoDireito,
+        maoOuBracoDireito ? pointCotoveloDireito : NovoCotoveloDireito,
+        maoOuBracoDireito ? pointDireita : pointMaoDireita,
     };
 
         graphics.DrawLines(pen, Horizontal);
