@@ -13,4 +13,8 @@
     <PackageReference Include="AForge.Video.DirectShow" Version="2.2.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Lima\Lima.csproj" />
+  </ItemGroup>
+
 </Project>

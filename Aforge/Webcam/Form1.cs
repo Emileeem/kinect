@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using AForge.Video.DirectShow;
-using static Lima.Lima;
+using Lima;
 using Bravo;
 using Eco;
 
@@ -23,7 +23,7 @@ namespace Webcam
         bool useEsq = false;
         int blur = 10;
         int bgBlur = 0;
-
+        
         public Form1()
         {
 
@@ -43,7 +43,7 @@ namespace Webcam
                             cam.RequestScreenshot(im =>
                             {
                                 this.bg = Blur.Apply(im, blur);
-                                this.bgMedia = mediaBg(histogram(this.bg));
+                                this.bgMedia = Limiarizacao.mediaBg(Limiarizacao.histogram(this.bg));
                                 this.bgBlur = blur;
                             });
                         }
@@ -90,7 +90,8 @@ namespace Webcam
                 {
                     if (!this.useBlur)
                         im = Blur.Apply(im, blur);
-                    im = flame(bgMedia, bg, im);
+                    im = Limiarizacao.flame(bgMedia, bg, im);
+                    
                     if (this.useEsq)
                         try
                         {

@@ -17,7 +17,7 @@ public class WebCamManager
         this.obj = lockObject;
     }
 
-    private VideoCaptureDevice? cam;
+    private VideoCaptureDevice cam;
     private Bitmap im = null;
     private object obj = null;
     private List<Action<Bitmap>> requests = new List<Action<Bitmap>>();

@@ -3,12 +3,14 @@ namespace Lima;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Threading;
+using System.Threading.Tasks;
 using Kilo;
 using Papa;
 
-static class Lima
+public static class Limiarizacao
 {
-    static public Bitmap flame(float mediaBg, Bitmap img1, Bitmap img2)
+    public static Bitmap flame(float mediaBg, Bitmap img1, Bitmap img2)
     {
         if (img1 is null)
             return img2;
