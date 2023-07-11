@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Kilo;
 
-public static class Thresholding 
+public static class Threshold
 {
     /// <summary>
     /// Encontra um ponto ideal de separação entre duas classes via método de Kmeans de 2 dimensões
@@ -105,7 +105,85 @@ public static class Thresholding
 
         return (first.Value + last.Value) / 2 + 5;
     }
+    /// <summary>
+    /// Encontra um ponto ideal de separação entre duas classes via método de Otsu
+    /// </summary>
+    /// <param name="hist">Histograma</param>
+    /// <param name="N">Soma total dos elementos do histograma</param>
+    /// <returns>Retorna um Threshold</returns>
+    public static byte[] Kmeans3D(int[] imgvector)
+    {
+        var rand = new Random();
 
+        byte[] centroides = new byte [6];
+
+        int r1;
+        int g1;
+        int b1;
+
+        int r2;
+        int g2;
+        int b2;
+
+        var count1 = 1;
+        var count2 = 1;
+
+        int ir;
+        int ig;
+        int ib;
+
+        rand.NextBytes (centroides);
+
+        for (int k = 0; k < 1000; k++)
+        {
+            count1 = count2 = 1;
+            r1 = r2 = 0;
+            g1 = g2 = 0;
+            b1 = b2 = 0;
+
+
+            for (int i = 0; i < imgvector.Length; i += 3)
+            {
+                ir = imgvector[i + 0];
+                ig = imgvector[i + 1];
+                ib = imgvector[i + 2];
+
+                var d1 = (centroides[0] - ir) * (centroides[0] - ir)
+                    + (centroides[1] - ig) * (centroides[1] - ig)
+                    + (centroides[2] - ib) * (centroides[2] - ib);
+
+                var d2 = (centroides[3] - ir) * (centroides[3] - ir)
+                    + (centroides[4] - ig) * (centroides[4] - ig)
+                    + (centroides[5] - ib) * (centroides[5] - ib);
+
+                if (d1 < d2)
+                {
+                    r1 += ir;
+                    g1 += ig;
+                    b1 += ib;
+                    count1++;
+                }
+                else
+                {
+                    r2 += ir;
+                    g2 += ig;
+                    b2 += ib;
+                    count2++;
+                }
+            }
+
+            centroides[0] = (byte)(r1 / count1);
+            centroides[1] = (byte)(g1 / count1);
+            centroides[2] = (byte)(b1 / count1);
+
+            centroides[3] = (byte)(r2 / count2);
+            centroides[4] = (byte)(g2 / count2);
+            centroides[5] = (byte)(b2 / count2);
+
+        }
+
+        return centroides;
+    }
     /// <summary>
     /// Encontra um ponto ideal de separação entre duas classes via método de Otsu
     /// </summary>
