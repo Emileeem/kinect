@@ -7,26 +7,23 @@ using Oscar;
 
 static class Lima
 {
-    static public Bitmap flame(float mediaBg, int[] histBg, Bitmap bg, Bitmap frame)
+    static public Bitmap flame(float mediaBg, Bitmap img1, Bitmap img2)
     {
-        if(bg is null)
-            return frame;
+        if (img1 is null)
+            return img2;
 
-        // int[] hist1 = histogram(img1); histBg
-        int[] hist2 = histogram(frame);
+        int[] hist2 = histogram(img2);
 
-        correcaoLuminosidade(mediaBg, frame, hist2);
+        correcaoLuminosidade(mediaBg, img2, hist2);
 
-        // img2.Save("braia.png");
+        var subTransformed = histSubT(img1, img2);
+        float kmeans = Kmeans.KmeansMethod(subTransformed);
 
-        int[] hist3 = histSub(bg, frame);
-        int n = frame.Height * frame.Width;
-        int threshold = Otsu.genOtsu(hist3, n);
+        Random random = new Random();
+        binarize(img1, img2, ((float)(1.09), (float)(1.21), (float)(1.19), (float)(-281)));
 
-        binarize(threshold, bg, frame);
 
-        // MessageBox.Show((DateTime.Now - dt).TotalMilliseconds.ToString() + "ms");
-        return frame;
+        return img2;
     }
 
 
@@ -100,9 +97,8 @@ static class Lima
         return hist;
     }
 
-    static public unsafe int[] histSub(Bitmap bmp1, Bitmap bmp2)
+    static public unsafe float[] histSubT(Bitmap bmp1, Bitmap bmp2)
     {
-        int[] sub = new int[256 * 256];
 
         var data = bmp1.LockBits(
             new Rectangle(0, 0, bmp1.Width, bmp1.Height),
@@ -116,31 +112,39 @@ static class Lima
             PixelFormat.Format24bppRgb
         );
 
+        int tamanho = (data.Height * data.Width * 3) / 25;
+
+        float[] sub = new float[tamanho];
+
         byte* img1 = (byte*)data.Scan0.ToPointer();
         byte* img2 = (byte*)data2.Scan0.ToPointer();
 
+        int k = 0;
 
-        for (int j = 0; j < data.Height; j++)
+        for (int j = 0; j < data.Height - 1; j += 5)
         {
-            for (int i = 0; i < data.Width; i++)
+            for (int i = 0; i < data.Width - 1; i += 5)
             {
                 int index = 3 * i + j * data.Stride;
 
-                float db = img1[index + 0] - img2[index + 0];
-                float dg = img1[index + 1] - img2[index + 1];
                 float dr = img1[index + 2] - img2[index + 2];
-
-                if (db < 0)
-                    db = -db;
-
-                if (dg < 0)
-                    dg = -dg;
+                float dg = img1[index + 1] - img2[index + 1];
+                float db = img1[index + 0] - img2[index + 0];
 
                 if (dr < 0)
                     dr = -dr;
 
-                int diff = (int)(db + dg + dr) / 3;
-                sub[diff]++;
+                if (dg < 0)
+                    dg = -dg;
+
+                if (db < 0)
+                    db = -db;
+
+                sub[k + 0] = dr;
+                sub[k + 1] = dg;
+                sub[k + 2] = db;
+
+                k += 3;
             }
         }
 
@@ -150,7 +154,7 @@ static class Lima
         return sub;
     }
 
-    static public unsafe void binarize(int threshold, Bitmap bmp1, Bitmap bmp2)
+    static public unsafe void binarize(Bitmap bmp1, Bitmap bmp2, (float a, float b, float c, float d) tupla)
     {
         var data1 = bmp1.LockBits(
             new Rectangle(0, 0, bmp1.Width, bmp1.Height),
@@ -175,22 +179,17 @@ static class Lima
             {
                 int index = 3 * i + j * stride;
 
-                int db = im1[index + 0] - im2[index + 0];
-                int dg = im1[index + 1] - im2[index + 1];
-                int dr = im1[index + 2] - im2[index + 2];
+                float db = im1[index + 0] - im2[index + 0];
+                float dg = im1[index + 1] - im2[index + 1];
+                float dr = im1[index + 2] - im2[index + 2];
 
-                if (db < 0)
-                    db = -db;
+                dr = dr * dr;
+                dg = dg * dg;
+                db = db * db;
 
-                if (dg < 0)
-                    dg = -dg;
+                float diff = (dr * tupla.a + dg * tupla.b + db * tupla.c + tupla.d);
 
-                if (dr < 0)
-                    dr = -dr;
-
-                int diff = (dr + dg + db) / 3;
-
-                if (diff < threshold)
+                if (diff > 0)
                 {
                     im2[index + 0] = (byte)(255);
                     im2[index + 1] = (byte)(255);
