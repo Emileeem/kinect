@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Kilo\Kilo.csproj" />
+    <ProjectReference Include="..\Papa\Papa.csproj" />
   </ItemGroup>
 
 </Project>
