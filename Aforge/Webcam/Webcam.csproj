@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Lima\Lima.csproj" />
+    <ProjectReference Include="..\..\Bravo\Bravo.csproj" />
   </ItemGroup>
 
 </Project>
