@@ -111,7 +111,7 @@ public static class Threshold
     /// <param name="hist">Histograma</param>
     /// <param name="N">Soma total dos elementos do histograma</param>
     /// <returns>Retorna um Threshold</returns>
-    public static byte[] Kmeans3D(int[] imgvector)
+    public static byte[] Kmeans3D(float[] imgvector)
     {
         var rand = new Random();
 
@@ -144,9 +144,9 @@ public static class Threshold
 
             for (int i = 0; i < imgvector.Length; i += 3)
             {
-                ir = imgvector[i + 0];
-                ig = imgvector[i + 1];
-                ib = imgvector[i + 2];
+                ir = (int)imgvector[i + 0];
+                ig = (int)imgvector[i + 1];
+                ib = (int)imgvector[i + 2];
 
                 var d1 = (centroides[0] - ir) * (centroides[0] - ir)
                     + (centroides[1] - ig) * (centroides[1] - ig)

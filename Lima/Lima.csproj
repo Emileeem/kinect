@@ -7,10 +7,12 @@
 
   <ItemGroup>
     <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
+    <PackageReference Include="System.Threading.Tasks.Parallel" Version="4.3.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Kilo\Kilo.csproj" />
+    <ProjectReference Include="..\Papa\Papa.csproj" />
   </ItemGroup>
 
 </Project>
