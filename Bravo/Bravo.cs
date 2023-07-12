@@ -14,7 +14,7 @@ public static class Blur
     /// </summary>
     /// <param name="input">Imagem na qual o efeito de blur será aplicado.</param>
     /// <param name="n">Intensidade do blur, se o valor sobrepor o tamanho da imagem nada irá acontecer.</param>
-    /// <returns>Imagem Bitmap com o efeito de blur aplicado</returns>
+    /// <returns>Imagem Bitmap com o efeito de blur aplicado.</returns>
     public static unsafe Bitmap Apply(Bitmap input, int n)
     {
         long[] r, g, b;
