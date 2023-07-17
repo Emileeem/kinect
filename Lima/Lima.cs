@@ -21,9 +21,10 @@ public static class Limiarizacao
 
         var subTransformed = histSubT(img1, img2);
 
-        byte[] kmeans = Threshold.Kmeans3D(subTransformed);
-        var p = ((float) kmeans[0], (float) kmeans[1], (float) kmeans[2]);
-        var q = ((float) kmeans[3], (float) kmeans[4], (float) kmeans[5]);
+        // byte[] kmeans = Threshold.Kmeans3D(subTransformed);
+        (float[] p, float[] q) kmeans = Threshold.Calculate(subTransformed);
+        var p = (kmeans.p[0], kmeans.p[1], kmeans.p[2]);
+        var q = (kmeans.q[0], kmeans.q[1], kmeans.q[2]);
 
         var abcd = Plano.CalcularPlano(p,q);
         binarize(img1, img2, ((float)abcd.a, (float)abcd.b, (float)abcd.c, (float)abcd.d));
@@ -136,18 +137,21 @@ public static class Limiarizacao
                 float dg = img1[index + 1] - img2[index + 1];
                 float db = img1[index + 0] - img2[index + 0];
 
-                if (dr < 0)
-                    dr = -dr;
+                float num = 0;
 
-                if (dg < 0)
-                    dg = -dg;
+                float ndr = dr + dg + db - System.MathF.Sqrt(num * dr);
+                float ndg = dg + db + dr - System.MathF.Sqrt(num * dg);
+                float ndb = db + dr + dg - System.MathF.Sqrt(num * db);
+                
+                // if(float.IsNaN(ndr)) {
+                //     Console.WriteLine(ndr);
+                //     Console.WriteLine(dr + dg + db);
+                //     Console.WriteLine(System.MathF.Sqrt(dr + dg + db));
+                // }
 
-                if (db < 0)
-                    db = -db;
-
-                sub[k + 0] = dr;
-                sub[k + 1] = dg;
-                sub[k + 2] = db;
+                sub[k + 0] = ndr;
+                sub[k + 1] = ndg;
+                sub[k + 2] = ndb;
 
                 k += 3;
             }
@@ -188,13 +192,15 @@ public static class Limiarizacao
                 float dg = im1[index + 1] - im2[index + 1];
                 float dr = im1[index + 2] - im2[index + 2];
 
-                dr = dr * dr;
-                dg = dg * dg;
-                db = db * db;
+                float num = 0;
 
-                float diff = (dr * tupla.a + dg * tupla.b + db * tupla.c + tupla.d);
+                float ndr = dr + dg + db - System.MathF.Sqrt(num * dr);
+                float ndg = dg + db + dr - System.MathF.Sqrt(num * dg);
+                float ndb = db + dr + dg - System.MathF.Sqrt(num * db);
 
-                if (diff > 0)
+                float diff = (ndr * tupla.a + ndg * tupla.b + ndb * tupla.c + tupla.d);
+
+                if (diff <= 0)
                 {
                     im2[index + 0] = (byte)(255);
                     im2[index + 1] = (byte)(255);
