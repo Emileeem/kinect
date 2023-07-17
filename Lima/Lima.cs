@@ -200,7 +200,7 @@ public static class Limiarizacao
 
                 float diff = (ndr * tupla.a + ndg * tupla.b + ndb * tupla.c + tupla.d);
 
-                if (diff > 0)
+                if (diff <= 0)
                 {
                     im2[index + 0] = (byte)(255);
                     im2[index + 1] = (byte)(255);
