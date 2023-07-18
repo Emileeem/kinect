@@ -18,6 +18,7 @@ namespace Webcam
         WebCamManager cam;
         Bitmap bg = null;
         float bgMedia = 0;
+        Point cursor = new Point(0, 0);
 
         bool useBlur = true;
         bool useEsq = false;
@@ -93,14 +94,17 @@ namespace Webcam
                     im = Limiarizacao.flame(bgMedia, bg, im);
                     
                     if (this.useEsq)
+                    {
+
                         try
                         {
-                            im = (Bitmap) Esqueleto.genEsqueleto(im);
+                            cursor = (Point)Esqueleto.genEsqueleto(im);
                         }
                         catch (Exception)
                         {
                             
                         }
+                    }
 
                     pbWebcam.Image = im;
                 }
