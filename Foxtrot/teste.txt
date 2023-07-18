@@ -1,0 +1,184 @@
+using System.Drawing;
+using System.Windows.Forms;
+using System;
+using System.Collections.Generic;
+using Foxtrot;
+
+public class MenuForm : Form
+{
+    PictureBox pb;
+    Bitmap bmp;
+    Graphics g;
+    Timer tm;
+    bool isDown = false;
+
+    public MenuForm()
+    {
+        this.WindowState = FormWindowState.Maximized;
+        this.FormBorderStyle = FormBorderStyle.None;
+
+        this.pb = new PictureBox();
+        this.pb.Dock = DockStyle.Fill;
+        this.Controls.Add(pb);
+
+        this.tm = new Timer();
+        this.tm.Interval = 20;
+
+        this.KeyDown += (o, e) =>
+        {
+            if (e.KeyCode == Keys.Escape)
+                Application.Exit();
+        };
+
+        this.Load += (o, e) =>
+        {
+            this.bmp = new Bitmap(pb.Width, pb.Height);
+            g = Graphics.FromImage(this.bmp);
+            g.Clear(Color.White);
+            this.pb.Image = bmp;
+
+            onstart();
+
+            this.tm.Start();
+        };
+
+        tm.Tick += (o, e) =>
+        {
+            frame();
+            pb.Refresh();
+        };
+
+        this.pb.MouseMove += (o, e) =>
+        {
+            cursor = e.Location;
+        };
+
+        this.pb.MouseDown += (o, e) =>
+        {
+            isDown = true;
+        };
+
+        this.pb.MouseUp += (o, e) =>
+        {
+            isDown = false;
+        };
+    }
+
+    int bgIndex = 0;
+    int frameCount = 0;
+
+    Sprite myCard;
+    Sprite selected;
+    Sprite card;
+    List<Image> background = new List<Image>();
+    Point cursor = new Point(0, 0);
+    Queue<DateTime> queue = new Queue<DateTime>();
+    float fps = 30f;
+
+    List<Sprite> allCards = new List<Sprite>();
+
+    void onstart()
+    {
+
+        for (int i = 0; i < 8; i++)
+            this.background.Add(
+              Bitmap.FromFile(@$"img/b{i}.gif").GetThumbnailImage(Width, Height, null, IntPtr.Zero)
+            );
+        queue.Enqueue(DateTime.Now);
+
+        var cards = Bitmap.FromFile(@"img/cartas/caralho.png") as Bitmap;
+        this.card = new Sprite(cards);
+        this.myCard = new Sprite(cards);
+
+
+        this.myCard.AddRect(new RectangleF(0, 0, 79, 110));
+        this.myCard.Rect = new RectangleF(400, 400, 79, 110);
+
+        var y2 = 0;
+        var i2 = 0;
+
+        for (int j = 0; j < 4; j++)
+        {
+            for (int i = 0; i < 13; i++)
+            {
+                allCards.Add(this.card.AddRect(new RectangleF(i * 88, y2, 79, 110), i2));
+                i2++;
+            }
+            y2 += 129;
+        }
+    }
+
+    void frame()
+    {
+        var bg = this.background[bgIndex];
+
+        if (frameCount % 6 == 0)
+        {
+            bgIndex++;
+            if (bgIndex == 8)
+                bgIndex = 0;
+        }
+        g.DrawImage(bg, Point.Empty);
+
+        //cartas demoniacas
+        // var x2 = 180;
+        // var i3 = 0;
+        // for (int j = 0; j < 4; j++)
+        // {
+        //     for (int i = 0; i < 13; i++)
+        //     {
+        //         var cardRect = new RectangleF(x2, 50 + 30 * i, 79, 110);                
+
+        //         if (cardRect.Contains(cursor) && isDown)
+        //         {
+        //             cardRect = new RectangleF(cursor.X - 79 / 2, cursor.Y - 112 / 2, 79, 112);
+        //         }
+
+        //         this.card.Rect = cardRect;
+        //         this.card.Draw(g, i3);
+        //         i3++;
+        //     }
+        //     x2+=180;
+        // }
+
+        // if (myCard.Rect.Contains(cursor) && isDown)
+        //     selected = myCard;
+
+        // if (isDown && selected is not null)
+        //     selected.Rect = new RectangleF(cursor.X - 79 / 2, cursor.Y - 110 / 2, 79, 110);
+        // else if (!isDown)
+        //     selected = null;
+
+        // myCard.Draw(g);
+
+        //------------------------- chat
+
+        foreach (var currentCard in allCards)
+        {
+            var cardRect = currentCard.Rect;
+
+            if (cardRect.Contains(cursor) && isDown)
+            {
+                cardRect = new RectangleF(cursor.X - cardRect.Width / 2, cursor.Y - cardRect.Height / 2, cardRect.Width, cardRect.Height);
+            }
+
+            currentCard.Rect = cardRect;
+            currentCard.Draw(g);
+        }
+        // FPS
+        frameCount++;
+        var older = queue.Peek();
+        var newer = DateTime.Now;
+
+        queue.Enqueue(newer);
+        if (queue.Count == 20)
+            queue.Dequeue();
+
+        var time = newer - older;
+        fps = 20f / (float)time.TotalSeconds;
+        g.DrawString(Math.Round(fps, 0).ToString(), SystemFonts.CaptionFont, Brushes.Yellow, PointF.Empty);
+
+
+
+    }
+}

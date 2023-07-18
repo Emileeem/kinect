@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <ItemGroup>
+  <!-- <ItemGroup>
     <ProjectReference Include="..\Bravo\Bravo.csproj" />
     <ProjectReference Include="..\Lima\Lima.csproj" />
     <ProjectReference Include="..\Eco\Eco.csproj" />
     <ProjectReference Include="..\Oscar\Oscar.csproj" />
-  </ItemGroup>
+  </ItemGroup> -->
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
