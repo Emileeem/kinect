@@ -137,11 +137,9 @@ public static class Limiarizacao
                 float dg = img1[index + 1] - img2[index + 1];
                 float db = img1[index + 0] - img2[index + 0];
 
-                float num = 0;
-
-                float ndr = dr + dg + db - System.MathF.Sqrt(num * dr);
-                float ndg = dg + db + dr - System.MathF.Sqrt(num * dg);
-                float ndb = db + dr + dg - System.MathF.Sqrt(num * db);
+                float ndr = dr + dg + db;
+                float ndg = dg + db + dr;
+                float ndb = db + dr + dg;
                 
                 // if(float.IsNaN(ndr)) {
                 //     Console.WriteLine(ndr);
@@ -192,11 +190,9 @@ public static class Limiarizacao
                 float dg = im1[index + 1] - im2[index + 1];
                 float dr = im1[index + 2] - im2[index + 2];
 
-                float num = 0;
-
-                float ndr = dr + dg + db - System.MathF.Sqrt(num * dr);
-                float ndg = dg + db + dr - System.MathF.Sqrt(num * dg);
-                float ndb = db + dr + dg - System.MathF.Sqrt(num * db);
+                float ndr = dr + dg + db;
+                float ndg = dg + db + dr;
+                float ndb = db + dr + dg;
 
                 float diff = (ndr * tupla.a + ndg * tupla.b + ndb * tupla.c + tupla.d);
 
