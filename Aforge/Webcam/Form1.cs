@@ -95,7 +95,7 @@ namespace Webcam
                     if (this.useEsq)
                         try
                         {
-                            im = Esqueleto.genEsqueleto(im);
+                            im = (Bitmap) Esqueleto.genEsqueleto(im);
                         }
                         catch (Exception)
                         {

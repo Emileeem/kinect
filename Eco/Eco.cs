@@ -1,8 +1,11 @@
 namespace Eco;
+using System;
+using System.Drawing;
+using System.Drawing.Imaging;
 
-static class Esqueleto
+public static class Esqueleto
 {
-    static unsafe object genEsqueleto(Bitmap imagem)
+    public static unsafe object genEsqueleto(Bitmap imagem)
     {
         //Coordenadas extremidades
         int xEsquerda = imagem.Width;
